@@ -9,6 +9,8 @@ fn main() {
     println!("Problem parsing arguments {}", err);
     process::exit(1);
   });
+
+  run(config);
 }
 
 struct Config {
@@ -27,4 +29,9 @@ impl Config {
 
     Ok(Config { query, filename })
   }
+}
+
+fn run(config: Config) {
+  let contents = fs::read_to_string(config.filename).expect("Something went wrong with the file");
+  println!("With text \n{}", contents);
 }

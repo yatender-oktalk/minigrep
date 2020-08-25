@@ -1,4 +1,5 @@
 use std::env;
+use std::error::Error;
 use std::fs;
 use std::process;
 
@@ -10,7 +11,10 @@ fn main() {
     process::exit(1);
   });
 
-  run(config);
+  if let Err(e) = run(config) {
+    println!("Application error: {}", e);
+    process::exit(1);
+  }
 }
 
 struct Config {
@@ -31,7 +35,9 @@ impl Config {
   }
 }
 
-fn run(config: Config) {
+fn run(config: Config) -> Result<(), Box<dyn Error>> {
   let contents = fs::read_to_string(config.filename).expect("Something went wrong with the file");
   println!("With text \n{}", contents);
+
+  Ok(())
 }

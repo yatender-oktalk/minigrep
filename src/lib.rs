@@ -21,15 +21,16 @@ impl Config {
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
   let contents = fs::read_to_string(config.filename).expect("Something went wrong with the file");
-  println!("With text \n{}", contents);
 
+  for line in search(&config.query, &contents) {
+    println!("{}", line);
+  }
   Ok(())
 }
 
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
   let mut results = Vec::new();
   for line in contents.lines() {
-    println!("{}", line);
     if line.contains(query) {
       results.push(line.trim());
     }
@@ -51,5 +52,28 @@ mod tests {
     pick three.";
 
     assert_eq!(vec!["safe, fast, productive."], search(query, contents));
+  }
+
+  #[test]
+  fn case_sensitive_search() {
+    let query = "duct";
+    let contents = "\
+      Rust:
+      safe, fast, productive.
+      Pick three.
+      Duct tape.";
+
+    assert_eq!(vec!["safe, fast, productive."], search(query, contents));
+  }
+  #[test]
+  fn case_insensitive_search() {
+    let query = "Productive";
+    let contents = "\
+    Rust:
+    safe, fast, productive.
+    Pick three.
+    Duct tape.";
+
+    assert_ne!(vec!["safe, fast, productive."], search(query, contents));
   }
 }

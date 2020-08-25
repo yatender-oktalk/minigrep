@@ -39,6 +39,20 @@ pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
   results
 }
 
+pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+  let mut results = Vec::new();
+  let query = query.to_lowercase();
+
+  for line in contents.lines() {
+    if line.to_lowercase().contains(&query) {
+      results.push(line.trim());
+    }
+  }
+
+  println!("{:?}", results);
+  results
+}
+
 #[cfg(test)]
 mod tests {
   use super::*;
@@ -74,6 +88,9 @@ mod tests {
     Pick three.
     Duct tape.";
 
-    assert_ne!(vec!["safe, fast, productive."], search(query, contents));
+    assert_eq!(
+      vec!["safe, fast, productive."],
+      search_case_insensitive(query, contents)
+    );
   }
 }
